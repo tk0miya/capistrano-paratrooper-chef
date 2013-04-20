@@ -4,9 +4,9 @@ require File.expand_path('../lib/capistrano-paratrooper-chef/version', __FILE__)
 Gem::Specification.new do |gem|
   gem.authors       = ["Takeshi KOMIYA"]
   gem.email         = ["i.tkomiya@gmail.com"]
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
-  gem.homepage      = ""
+  gem.description   = %q{A capistrano task to invoke chef-solo}
+  gem.summary       = %q{A capistrano task to invoke chef-solo}
+  gem.homepage      = "https://github.com/tk0miya/capistrano-paratrooper-chef"
 
   gem.files         = `git ls-files`.split($\)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
@@ -14,4 +14,6 @@ Gem::Specification.new do |gem|
   gem.name          = "capistrano-paratrooper-chef"
   gem.require_paths = ["lib"]
   gem.version       = Capistrano::Paratrooper::Chef::VERSION
+
+  gem.add_dependency("capistrano")
 end
