@@ -38,7 +38,7 @@ Capistrano::Configuration.instance.load do
           cmd = top.sudo
         end
       ensure
-        self[:sudo] = old_sudo
+        self[:sudo] = old_sudo  if old_sudo
       end
 
       cmd
