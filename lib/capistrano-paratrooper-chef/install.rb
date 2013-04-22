@@ -20,7 +20,7 @@ Capistrano::Configuration.instance.load do
         required_version = fetch(:chef_version).inspect
         installed = capture("gem list -i chef -v #{required_version} || true").strip
 
-        if installed == "false"
+        if installed != "true"
           if fetch(:rvm_type, nil) == :user or fetch(:rbenv_path, nil)
             run "gem uninstall -xaI chef || true"
             run "gem install chef -v #{fetch(:chef_version).inspect} --quiet --no-ri --no-rdoc"
