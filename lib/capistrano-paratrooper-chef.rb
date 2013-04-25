@@ -15,7 +15,9 @@ Capistrano::Configuration.instance.load do
 
     # remote chef settings
     set :chef_solo_path, "chef-solo"
-    set :chef_working_dir, "chef-solo"
+    set(:chef_working_dir) {
+      capture("echo $HOME").strip + "/chef-solo"
+    }
     set :chef_cache_dir, "/var/chef/cache"
 
     # chef settings
