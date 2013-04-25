@@ -96,8 +96,14 @@ Capistrano::Configuration.instance.load do
                 server.options[:chef_attributes]["run_list"] = []
               end
             end
+          rescue JSON::ParserError
+            logger.important("Could not parse JSON file: %s" % solo_json_path_for(server.host))
           rescue
-            server.options[:chef_attributes] = attrs = {"run_list" => []}
+            logger.important("Could not read JSON file: %s" % solo_json_path_for(server.host))
+          ensure
+            if server.options[:chef_attributes].nil?
+              server.options[:chef_attributes] = {"run_list" => []}
+            end
           end
 
           if fetch(:chef_roles_auto_discovery)
