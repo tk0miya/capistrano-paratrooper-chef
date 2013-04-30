@@ -1,5 +1,7 @@
+require "find"
 require "json"
 require "tempfile"
+require "capistrano-paratrooper-chef/tarwriter"
 require "capistrano-paratrooper-chef/version"
 
 
@@ -221,16 +223,17 @@ Capistrano::Configuration.instance.load do
       task :upload, :except => { :no_release => true } do
         librarian_chef.fetch
 
-        kitchen_paths = [cookbooks_paths, roles_path, databags_path].flatten.compact.select{|d| File.exists?(d)}
-        tarball = Tempfile.new("kitchen.tar")
-        begin
-          tarball.close
-          system "tar -czf #{tarball.path} #{kitchen_paths.join(' ')}"
-          top.upload tarball.path, remote_path("kitchen.tar"), :via => :scp
-          run "cd #{fetch(:chef_working_dir)} && tar -xzf kitchen.tar"
-        ensure
-          tarball.unlink
+        stream = StringIO.new
+        TarWriter.new(stream) do |writer|
+          kitchen_paths = [cookbooks_paths, roles_path, databags_path].flatten.compact.select{|d| File.exists?(d)}
+          Find.find(*kitchen_paths) do |path|
+            writer.add(path)
+          end
         end
+
+        stream.seek(0)
+        put stream.read, remote_path("kitchen.tar"), :via => :scp
+        run "cd #{fetch(:chef_working_dir)} && tar -xf kitchen.tar"
       end
     end
   end
