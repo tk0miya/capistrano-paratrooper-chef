@@ -9,7 +9,7 @@ Capistrano::Configuration.instance.load do
       task :install_omnibus_chef do
         run "curl -L http://www.opscode.com/chef/install.sh | #{top.sudo} bash"
       end
-      after "deploy:setup" "paratrooper:chef:install_omnibus_chef"
+      after "deploy:setup", "paratrooper:chef:install_omnibus_chef"
     end
   end
 end
