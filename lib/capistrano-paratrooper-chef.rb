@@ -187,6 +187,27 @@ Capistrano::Configuration.instance.load do
     end
 
     namespace :kitchen do
+      namespace :librarian_chef do
+        def fetch
+          require 'librarian/action'
+          require 'librarian/chef'
+
+          if File.exist? 'Cheffile'
+            logger.debug("executing librarian-chef")
+            Librarian::Action::Resolve.new(librarian_env).run
+            Librarian::Action::Install.new(librarian_env).run
+          end
+        rescue LoadError
+          # pass
+        end
+
+        def librarian_env
+          @librarian_env ||= Librarian::Chef::Environment.new
+          @librarian_env.config_db.local["path"] = cookbooks_paths[0]
+          @librarian_env
+        end
+      end
+
       def ensure_cookbooks
         abort "No cookbooks found in #{fetch(:cookbooks_directory).inspect}" if kitchen.cookbooks_paths.empty?
       end
@@ -198,6 +219,8 @@ Capistrano::Configuration.instance.load do
 
       desc "Upload files in kitchen"
       task :upload, :except => { :no_release => true } do
+        librarian_chef.fetch
+
         kitchen_paths = [cookbooks_paths, roles_path, databags_path].flatten.compact.select{|d| File.exists?(d)}
         tarball = Tempfile.new("kitchen.tar")
         begin
