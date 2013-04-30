@@ -1,7 +1,7 @@
 require "find"
 require "json"
 require "tempfile"
-require "capistrano-paratrooper-chef/tarwriter"
+require "capistrano-paratrooper-chef/tar_writer"
 require "capistrano-paratrooper-chef/version"
 
 
