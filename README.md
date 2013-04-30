@@ -46,9 +46,17 @@ Paratrooper-chef includes another task to setup chef-solo to remote hosts.
 To enable it, add following in your config/deploy.rb.
 
     # in "config/deploy.rb"
+    require "capistrano-paratrooper-chef/omnibus_install"
+
+This recipe will install chef-solo using omnibus-installer during deploy:setup task.
+
+Another way, you want to install chef-solo as gem package, use following lines.
+
+    # in "config/deploy.rb"
     require "capistrano-paratrooper-chef/install"
 
-This recipe will install chef-solo during deploy:setup task.
+This recipe will install chef-solo using gem command during deploy:setup task.
+Of cource, capistrano-paratrooper-chef/install requires ruby and rubygems are available.
 
 ## Define attributes for specific host
 
