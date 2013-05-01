@@ -70,8 +70,8 @@ If there are no defitions for host, paratrooper-chef uses config/solo.rb as attr
 Chef roles auto discovery appends roles of chef to run_list of each host.
 To enable auto discovery, set :chef_roles_auto_discovery true (as defualt, it is disabled).
 
-   # in "config/deploy.rb"
-   set :chef_roles_auto_discovery, true
+    # in "config/deploy.rb"
+    set :chef_roles_auto_discovery, true
 
 This feature makes name-based relations with role of capistrano and chef's one::
 * Discovering role definitions of chef from role-names of capistrano that server is assigned
@@ -81,19 +81,19 @@ This feature makes name-based relations with role of capistrano and chef's one::
 
 For example, 'web.example.com' plays :web role:
 
-   set :web, 'web.example.com'
+    set :web, 'web.example.com'
 
 And, there is role defition named 'web.json'.
 
-   # config/roles/web.json
-   {
-     "nginx" : {
-       # ...
-     },
-     "run_list" : [
-       "recipe[nginx]",
-     }
-   }
+    # config/roles/web.json
+    {
+      "nginx" : {
+        # ...
+      },
+      "run_list" : [
+        "recipe[nginx]",
+      }
+    }
 
 Then, paratrooper-chef detects automatically these relation, and append 'role[web]' to run_list of web.example.com .
 (do not effect to other hosts)
