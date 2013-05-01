@@ -14,6 +14,7 @@ Capistrano::Configuration.instance.load do
     set :chef_nodes_path, "nodes"
     set :chef_roles_path, "roles"
     set :chef_databags_path, "data_bags"
+    set :chef_databag_secret, "data_bag_key"
 
     # remote chef settings
     set :chef_solo_path, "chef-solo"
@@ -71,6 +72,10 @@ Capistrano::Configuration.instance.load do
 
     def databags_path
       File.join(fetch(:chef_kitchen_path), fetch(:chef_databags_path))
+    end
+
+    def databag_secret_path
+      File.join(fetch(:chef_kitchen_path), fetch(:chef_databag_secret))
     end
 
     def nodes_path
@@ -164,6 +169,12 @@ Capistrano::Configuration.instance.load do
           data_bag_path File.join(root, #{kitchen.databags_path.inspect})
           verbose_logging #{fetch(:chef_verbose_logging)}
         CONF
+        if File.exist?(kitchen.databag_secret_path)
+          config += <<-CONF
+          encrypted_data_bag_secret File.join(root, #{kitchen.databag_secret_path.inspect})
+          CONF
+        end
+
         put config, remote_path("solo.rb"), :via => :scp
       end
 
@@ -225,7 +236,7 @@ Capistrano::Configuration.instance.load do
 
         stream = StringIO.new
         TarWriter.new(stream) do |writer|
-          kitchen_paths = [cookbooks_paths, roles_path, databags_path].flatten.compact.select{|d| File.exists?(d)}
+          kitchen_paths = [cookbooks_paths, roles_path, databags_path, databag_secret_path].flatten.compact.select{|d| File.exists?(d)}
           Find.find(*kitchen_paths) do |path|
             writer.add(path)
           end

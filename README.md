@@ -34,6 +34,7 @@ by default, paratrooper-chef uses following files and directories.
 * config/site-cookbooks
 * config/roles
 * config/data_bags
+* config/data_bag_key
 
 Finally, run capistrano with paratrooper:chef task. Then chef-solo runs at remote host.
 
@@ -122,6 +123,7 @@ Following options are available.
     * `:chef_nodes_path` - nodes directory. use `nodes` by default.
     * `:chef_roles_path` - roles directory. use `roles` by default.
     * `:chef_databagas_path` - data bags directory. use `data_bagas` by default.
+    * `:chef_databag_secret` - path of secret-key for data bags. use `data_bag_key` by default.
 
 ## Support recipes
 
