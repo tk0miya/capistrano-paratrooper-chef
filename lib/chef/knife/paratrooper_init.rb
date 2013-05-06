@@ -18,6 +18,7 @@ class Chef
         mkdir_p @base
         create_kitchen
         create_conffiles
+        create_ignorefiles
       end
 
       def validate!
@@ -57,6 +58,20 @@ class Chef
           unless File.exist?(path)
             ui.msg "creating %s" % path
             cp Paratrooper::Chef.resource(File.basename(conffile)), path
+          end
+        end
+      end
+
+      def create_ignorefiles
+        %w[.gitignore .hgignore].each do |ignore|
+          path = File.join(@base, ignore)
+          unless File.exist?(path)
+            ui.msg "creating %s" % path
+            File.open(path, 'w') do |f|
+              f.puts("vendor/bundle/")
+              f.puts("config/cookbooks/")
+              f.puts("tmp/librarian/")
+            end
           end
         end
       end
