@@ -1,0 +1,8 @@
+source 'https://rubygems.org'
+
+group :deploy do
+  gem 'capistrano'
+  gem 'capistrano_colors'
+  gem 'capistrano-paratrooper-chef'
+  gem 'librarian-chef'
+end

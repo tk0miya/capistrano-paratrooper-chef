@@ -17,4 +17,14 @@ if defined?(Capistrano)
   require 'capistrano-paratrooper-chef/chef'
 end
 
+require "pathname"
 require "capistrano-paratrooper-chef/version"
+
+
+module Paratrooper
+  module Chef
+    def self.resource(name)
+      Pathname.new(__FILE__).dirname.join('capistrano-paratrooper-chef/resources', name)
+    end
+  end
+end
