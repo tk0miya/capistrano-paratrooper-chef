@@ -23,8 +23,14 @@ require "capistrano-paratrooper-chef/version"
 
 module Paratrooper
   module Chef
-    def self.resource(name)
-      Pathname.new(__FILE__).dirname.join('capistrano-paratrooper-chef/resources', name)
+    def self.resource(name, extra_path=nil)
+      subdirs = [extra_path, 'default'].compact
+      subdirs.each do |path|
+        resource = Pathname.new(__FILE__).dirname.join('capistrano-paratrooper-chef/resources', path, name)
+        return resource  if File.exists?(resource)
+      end
+
+      raise Errno::ENOENT, name
     end
   end
 end

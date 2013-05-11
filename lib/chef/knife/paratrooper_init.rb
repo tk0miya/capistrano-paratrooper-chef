@@ -10,6 +10,12 @@ class Chef
         require 'fileutils'
       end
 
+      option :multistage,
+        :short => '-m',
+        :long => '--multistage',
+        :description => 'Enable multistage extenstion',
+        :default => false
+
       banner "knife paratrooper init DIRECTORY"
 
       def run
@@ -46,6 +52,7 @@ class Chef
       def create_kitchen
         mkdir_p @base
         mkdir_p @base, "config"
+        mkdir_p @base, "config", "deploy"  if config[:multistage]
 
         %w[nodes roles data_bags cookbooks site-cookbooks].each do |subdir|
           mkdir_p @base, 'config', subdir, :keep => true
@@ -53,11 +60,19 @@ class Chef
       end
 
       def create_conffiles
-        %w[Gemfile Capfile config/deploy.rb Cheffile config/solo.json].each do |conffile|
+        conffiles = %w[Gemfile Capfile config/deploy.rb Cheffile config/solo.json]
+        extra_path = nil
+
+        if config[:multistage]
+          conffiles.insert(3, 'config/deploy/develop.rb')
+          extra_path = 'multistage'
+        end
+
+        conffiles.each do |conffile|
           path = File.join(@base, conffile)
           unless File.exist?(path)
             ui.msg "creating %s" % path
-            cp Paratrooper::Chef.resource(File.basename(conffile)), path
+            cp Paratrooper::Chef.resource(File.basename(conffile), extra_path), path
           end
         end
       end
