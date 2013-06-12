@@ -37,6 +37,9 @@ Capistrano::Configuration.instance.load do
       capture("echo $HOME").strip + "/chef-solo"
     }
     set :chef_cache_dir, "/var/chef/cache"
+    set(:chef_use_sudo) {
+      capture("id -u").to_i != 0
+    }
 
     # chef settings
     set :chef_roles_auto_discovery, false
@@ -52,10 +55,14 @@ Capistrano::Configuration.instance.load do
           self[:sudo] = "rvmsudo_secure_path=1 #{File.join(rvm_bin_path, "rvmsudo")}"
         end
 
-        if envvars
-          cmd = "#{top.sudo} env #{envvars.join(" ")}"
-        else
+        if fetch(:chef_use_sudo)
           cmd = top.sudo
+        else
+          cmd = ""
+        end
+
+        if envvars
+          cmd += " env #{envvars.join(" ")}"
         end
       ensure
         self[:sudo] = old_sudo  if old_sudo

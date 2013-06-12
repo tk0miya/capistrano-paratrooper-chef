@@ -23,9 +23,9 @@ Capistrano::Configuration.instance.load do
       desc "Installs chef (by omnibus installer)"
       task :install_omnibus_chef do
         if capture("command -v curl || true").strip.empty?
-          run "wget -O - http://www.opscode.com/chef/install.sh | #{top.sudo} bash"
+          run "wget -O - http://www.opscode.com/chef/install.sh | #{top.sudo if fetch(:chef_use_sudo)} bash"
         else
-          run "curl -L http://www.opscode.com/chef/install.sh | #{top.sudo} bash"
+          run "curl -L http://www.opscode.com/chef/install.sh | #{top.sudo if fetch(:chef_use_sudo)} bash"
         end
       end
       after "deploy:setup", "paratrooper:chef:install_omnibus_chef"
