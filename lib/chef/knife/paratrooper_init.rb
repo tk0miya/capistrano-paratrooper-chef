@@ -54,7 +54,7 @@ class Chef
         mkdir_p @base, "config"
         mkdir_p @base, "config", "deploy"  if config[:multistage]
 
-        %w[nodes roles data_bags cookbooks site-cookbooks].each do |subdir|
+        %w[nodes roles environments data_bags cookbooks site-cookbooks].each do |subdir|
           mkdir_p @base, 'config', subdir, :keep => true
         end
       end
