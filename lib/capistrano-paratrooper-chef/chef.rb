@@ -25,9 +25,10 @@ Capistrano::Configuration.instance.load do
     # directory structure of chef-kitchen
     set :chef_kitchen_path, "config"
     set :chef_default_solo_json_path, "solo.json"
-    set :chef_cookbooks_path, ["cookbooks", "site-cookbooks"]
     set :chef_nodes_path, "nodes"
+    set :chef_cookbooks_path, ["cookbooks", "site-cookbooks"]
     set :chef_roles_path, "roles"
+    set :chef_environments_path, "environments"
     set :chef_databags_path, "data_bags"
     set :chef_databag_secret, "data_bag_key"
 
@@ -90,6 +91,10 @@ Capistrano::Configuration.instance.load do
     def role_exists?(name)
       File.exist?(File.join(roles_path, name.to_s + ".json")) ||
       File.exist?(File.join(roles_path, name.to_s + ".rb"))
+    end
+
+    def environments_path
+      File.join(fetch(:chef_kitchen_path), fetch(:chef_environments_path))
     end
 
     def databags_path
@@ -188,6 +193,7 @@ Capistrano::Configuration.instance.load do
           file_cache_path #{fetch(:chef_cache_dir).inspect}
           cookbook_path #{kitchen.cookbooks_paths.inspect}.collect{|dir| File.join(root, dir)}
           role_path File.join(root, #{kitchen.roles_path.inspect})
+          environments_path File.join(root, #{kitchen.environments_path.inspect})
           data_bag_path File.join(root, #{kitchen.databags_path.inspect})
           verbose_logging #{fetch(:chef_verbose_logging)}
         CONF
@@ -258,7 +264,8 @@ Capistrano::Configuration.instance.load do
 
         stream = StringIO.new
         TarWriter.new(stream) do |writer|
-          kitchen_paths = [cookbooks_paths, roles_path, databags_path, databag_secret_path].flatten.compact.select{|d| File.exists?(d)}
+          paths = [cookbooks_paths, roles_path, environments_path, databags_path, databag_secret_path]
+          kitchen_paths = paths.flatten.compact.select{|d| File.exists?(d)}
           Find.find(*kitchen_paths) do |path|
             writer.add(path)
           end

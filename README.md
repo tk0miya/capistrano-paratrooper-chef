@@ -33,6 +33,7 @@ by default, paratrooper-chef uses following files and directories.
 * config/cookbooks
 * config/site-cookbooks
 * config/roles
+* config/environments
 * config/data_bags
 * config/data_bag_key
 
@@ -122,6 +123,7 @@ Following options are available.
     * `:chef_cookbooks_path` - cookbooks directories list. use `["cookbooks", "site-cookbooks"]` by default.
     * `:chef_nodes_path` - nodes directory. use `nodes` by default.
     * `:chef_roles_path` - roles directory. use `roles` by default.
+    * `:chef_environments_path` - environments directory. use `environments` by default.
     * `:chef_databags_path` - data bags directory. use `data_bags` by default.
     * `:chef_databag_secret` - path of secret-key for data bags. use `data_bag_key` by default.
 
