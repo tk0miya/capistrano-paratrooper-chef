@@ -228,6 +228,19 @@ Capistrano::Configuration.instance.load do
     end
 
     namespace :kitchen do
+      namespace :berkshelf do
+        def fetch
+          require 'berkshelf'
+
+          if File.exist? 'Berksfile'
+            logger.debug("executing berkshelf")
+            Berkshelf::Berksfile.from_file('Berksfile').install(:path => cookbooks_paths[0])
+          end
+        rescue LoadError
+          # pass
+        end
+      end
+
       namespace :librarian_chef do
         def fetch
           require 'librarian/action'
@@ -251,6 +264,7 @@ Capistrano::Configuration.instance.load do
 
       def ensure_cookbooks
         abort "No cookbooks found in #{fetch(:cookbooks_directory).inspect}" if kitchen.cookbooks_paths.empty?
+        abort "Multiple cookbook definitions found: Cheffile, Berksfile" if File.exist? 'Cheffile' and File.exsit? 'Berksfile'
       end
 
       def ensure_working_dir
@@ -260,6 +274,7 @@ Capistrano::Configuration.instance.load do
 
       desc "Upload files in kitchen"
       task :upload, :except => { :no_release => true } do
+        berkshelf.fetch
         librarian_chef.fetch
 
         stream = StringIO.new

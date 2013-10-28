@@ -134,10 +134,11 @@ Following recipes work fine with paratrooper-chef.
 * rvm-capistrano (https://github.com/wayneeseguin/rvm-capistrano)
 * capistrano-rbenv (https://github.com/yyuu/capistrano-rbenv)
 
-## Support cookbooks manager
+## Support cookbook managers
 
-Following cookbooks managers work fine with paratrooper-chef.
+Following cookbook managers work fine with paratrooper-chef.
 
+* berkshelf (http://berkshelf.com/)
 * librarian-chef (https://github.com/applicationsonline/librarian-chef)
 
 paratrooper-chef try to fetch cookbooks using these managers.
