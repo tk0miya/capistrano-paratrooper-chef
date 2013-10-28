@@ -15,5 +15,5 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.version       = Capistrano::Paratrooper::Chef::VERSION
 
-  gem.add_dependency("capistrano")
+  gem.add_dependency("capistrano", "~> 2.14")
 end
