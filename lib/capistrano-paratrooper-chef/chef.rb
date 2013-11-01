@@ -112,33 +112,36 @@ Capistrano::Configuration.instance.load do
 
 
     namespace :run_list do
-      def solo_json_path_for(name)
-        path = File.join(nodes_path, name.to_s + ".json")
-        if File.exist?(path)
-          path
-        else
-          File.join(fetch(:chef_kitchen_path), fetch(:chef_default_solo_json_path))
-        end
+      def solo_json_paths_for(name)
+        [File.join(nodes_path, name.to_s + ".json"),
+         File.join(fetch(:chef_kitchen_path), fetch(:chef_default_solo_json_path))]
       end
 
       def discover
         find_servers_for_task(current_task).each do |server|
-          begin
-            open(solo_json_path_for(server.host)) do |fd|
-              server.options[:chef_attributes] = JSON.load(fd)
+          solo_json_paths = solo_json_paths_for(server.host)
+          solo_json_paths.each do |path|
+            next  if not File.exist?(path)
 
-              if server.options[:chef_attributes]["run_list"].nil?
-                server.options[:chef_attributes]["run_list"] = []
+            begin
+              open(path) do |fd|
+                server.options[:chef_attributes] = JSON.load(fd)
+
+                if server.options[:chef_attributes]["run_list"].nil?
+                  server.options[:chef_attributes]["run_list"] = []
+                end
               end
+              break
+            rescue JSON::ParserError
+              logger.important("Could not parse JSON file: %s" % path)
+            rescue => e
+              logger.important("Could not read JSON file: %s" % e)
             end
-          rescue JSON::ParserError
-            logger.important("Could not parse JSON file: %s" % solo_json_path_for(server.host))
-          rescue
-            logger.important("Could not read JSON file: %s" % solo_json_path_for(server.host))
-          ensure
-            if server.options[:chef_attributes].nil?
-              server.options[:chef_attributes] = {"run_list" => []}
-            end
+          end
+
+          if server.options[:chef_attributes].nil?
+            logger.important("any JSON file not found: %s" % solo_json_paths.inspect)
+            server.options[:chef_attributes] = {"run_list" => []}
           end
 
           if fetch(:chef_roles_auto_discovery)
