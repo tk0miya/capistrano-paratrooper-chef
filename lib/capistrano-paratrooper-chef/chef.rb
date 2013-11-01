@@ -266,7 +266,7 @@ Capistrano::Configuration.instance.load do
 
       def ensure_cookbooks
         abort "No cookbooks found in #{fetch(:cookbooks_directory).inspect}" if kitchen.cookbooks_paths.empty?
-        abort "Multiple cookbook definitions found: Cheffile, Berksfile" if File.exist? 'Cheffile' and File.exsit? 'Berksfile'
+        abort "Multiple cookbook definitions found: Cheffile, Berksfile" if File.exist? 'Cheffile' and File.exist? 'Berksfile'
       end
 
       def ensure_working_dir
