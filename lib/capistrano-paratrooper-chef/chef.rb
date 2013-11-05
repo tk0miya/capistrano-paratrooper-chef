@@ -239,7 +239,13 @@ Capistrano::Configuration.instance.load do
 
           if File.exist? 'Berksfile'
             logger.debug("executing berkshelf")
-            Berkshelf::Berksfile.from_file('Berksfile').install(:path => cookbooks_paths[0])
+            berksfile = Berkshelf::Berksfile.from_file('Berksfile')
+            if berksfile.respond_to?(:vendor)
+              FileUtils.rm_rf(cookbooks_paths[0])
+              berksfile.vendor(cookbooks_paths[0])
+            else
+              berksfile.install(:path => vendor_cookbooks_path)
+            end
           end
         rescue LoadError
           # pass
