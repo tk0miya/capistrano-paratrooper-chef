@@ -26,7 +26,8 @@ Capistrano::Configuration.instance.load do
     set :chef_kitchen_path, "config"
     set :chef_default_solo_json_path, "solo.json"
     set :chef_nodes_path, "nodes"
-    set :chef_cookbooks_path, ["cookbooks", "site-cookbooks"]
+    set :chef_cookbooks_path, ["site-cookbooks"]
+    set :chef_vendor_cookbooks_path, "vendor/cookbooks"
     set :chef_roles_path, "roles"
     set :chef_environment, nil
     set :chef_environment_path, "environments"
@@ -82,7 +83,12 @@ Capistrano::Configuration.instance.load do
     end
 
     def cookbooks_paths
-      fetch(:chef_cookbooks_path).collect{|path| File.join(fetch(:chef_kitchen_path), path)}
+      dirs = [fetch(:chef_cookbooks_path), fetch(:chef_vendor_cookbooks_path)].flatten
+      dirs.collect{|path| File.join(fetch(:chef_kitchen_path), path)}
+    end
+
+    def vendor_cookbooks_path
+      File.join(fetch(:chef_kitchen_path), fetch(:chef_vendor_cookbooks_path))
     end
 
     def roles_path
@@ -241,8 +247,9 @@ Capistrano::Configuration.instance.load do
             logger.debug("executing berkshelf")
             berksfile = Berkshelf::Berksfile.from_file('Berksfile')
             if berksfile.respond_to?(:vendor)
-              FileUtils.rm_rf(cookbooks_paths[0])
-              berksfile.vendor(cookbooks_paths[0])
+              FileUtils.rm_rf(vendor_cookbooks_path)
+              FileUtils.mkdir_p(File.dirname(vendor_cookbooks_path))
+              berksfile.vendor(vendor_cookbooks_path)
             else
               berksfile.install(:path => vendor_cookbooks_path)
             end
@@ -268,7 +275,7 @@ Capistrano::Configuration.instance.load do
 
         def librarian_env
           @librarian_env ||= Librarian::Chef::Environment.new
-          @librarian_env.config_db.local["path"] = cookbooks_paths[0]
+          @librarian_env.config_db.local["path"] = vendor_cookbooks_path
           @librarian_env
         end
       end

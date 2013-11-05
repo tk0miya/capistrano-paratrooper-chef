@@ -29,8 +29,9 @@ To setup paratrooper-chef for your application, add following in you config/depl
 And then, put your chef-kitchen files to config/ directory. 
 by default, paratrooper-chef uses following files and directories.
 
+* config/Berksfile
+* config/Cheffile
 * config/solo.rb
-* config/cookbooks
 * config/site-cookbooks
 * config/roles
 * config/environments
@@ -120,7 +121,8 @@ Following options are available.
 
     * `:chef_kitchen_path` - root directory of kitchen. use `config` by default.
     * `:chef_default_solo_json_path` - default attribute file a.k.a solo.json. use `solo.json` by default. 
-    * `:chef_cookbooks_path` - cookbooks directories list. use `["cookbooks", "site-cookbooks"]` by default.
+    * `:chef_cookbooks_path` - cookbooks directory (or list of directories). use `site-cookbooks` by default.
+    * `:chef_vendor_cookbooks_path` - cookbooks directory for berkshelf/librarian. use `vendor/cookbooks` by default.
     * `:chef_nodes_path` - nodes directory. use `nodes` by default.
     * `:chef_roles_path` - roles directory. use `roles` by default.
     * `:chef_environment` - environment setting. empty by default.
