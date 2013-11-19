@@ -7,6 +7,7 @@ Gem::Specification.new do |gem|
   gem.description   = %q{A capistrano task to invoke chef-solo}
   gem.summary       = %q{A capistrano task to invoke chef-solo}
   gem.homepage      = "https://github.com/tk0miya/capistrano-paratrooper-chef"
+  gem.license       = "Apache 2.0"
 
   gem.files         = `git ls-files`.split($\)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
